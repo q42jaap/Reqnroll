@@ -301,11 +301,14 @@ namespace Reqnroll.Generator.Generation
 
             using (new SourceLineScope(_reqnrollConfiguration, _codeDomHelper, statements, generationContext.Document.SourceFilePath, scenario.Location))
             {
-                statements.Add(new CodeExpressionStatement(
-                    new CodeMethodInvokeExpression(
-                        new CodeThisReferenceExpression(),
-                        generationContext.ScenarioInitializeMethod.Name,
-                        new CodeVariableReferenceExpression("scenarioInfo"))));
+                var expression = new CodeMethodInvokeExpression(
+                    new CodeThisReferenceExpression(),
+                    generationContext.ScenarioInitializeMethod.Name,
+                    new CodeVariableReferenceExpression("scenarioInfo"));
+
+                _codeDomHelper.MarkCodeMethodInvokeExpressionAsAwait(expression);
+
+                statements.Add(new CodeExpressionStatement(expression));
             }
 
             testMethod.Statements.AddRange(statements.ToArray());

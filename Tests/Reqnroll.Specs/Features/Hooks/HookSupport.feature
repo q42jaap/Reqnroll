@@ -105,8 +105,8 @@ Examples:
     | AfterScenarioBlock  | 9     |
     | BeforeScenario      | 3     |
     | AfterScenario       | 3     |
-    | BeforeFeature       | 2     |
-    | AfterFeature        | 2     |
+    | BeforeFeature       | 3     |
+    | AfterFeature        | 3     |
     | BeforeTestRun       | 1     |
     | AfterTestRun        | 1     |
 

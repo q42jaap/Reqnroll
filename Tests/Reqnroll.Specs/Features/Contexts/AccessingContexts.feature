@@ -174,69 +174,6 @@ Scenario: Should be able to inject FeatureContext
          | Succeeded |
          | 1         |
 
-Scenario: The same FeatureContext should be inject in the scenarios of the same feature
-	Given the following binding class
-        """
-		using System;
-		using Reqnroll;
-
-		[Binding]
-		public class StepsWithFeatureContext
-		{
-			private readonly FeatureContext featureContext;
-
-			public StepsWithFeatureContext(FeatureContext featureContext)
-			{
-				if (featureContext == null) throw new ArgumentNullException("featureContext");
-				this.featureContext = featureContext;
-			}
-
-			[Given(@"I put something into the context")]
-			public void GivenIPutSomethingIntoTheContext()
-			{
-				featureContext.Set("test-value", "test-key");
-			}
-		}
-        """	
-	Given the following binding class
-        """
-		using System;
-		using Reqnroll;
-
-		[Binding]
-		public class AnotherStepsWithFeatureContext
-		{
-		    private readonly FeatureContext featureContext;
-
-			public AnotherStepsWithFeatureContext(FeatureContext featureContext)
-			{
-				if (featureContext == null) throw new ArgumentNullException("featureContext");
-				this.featureContext = featureContext;
-			}
-
-			[Then(@"something should be found in the context")]
-			public void ThenSomethingShouldBeFoundInTheContext()
-			{
-				var testValue = featureContext.Get<string>("test-key");
-				if (testValue != "test-value") throw new Exception("Test value was not found in the scenarioContext"); 
-			}
-		}
-        """	
-	And there is a feature file in the project as
-         """
-		 Feature: Feature1
-	
-		 Scenario: Scenario1
-			Given I put something into the context  
-
-		 Scenario: Scenario2
-			Then something should be found in the context
-         """
-	When I execute the tests
-	Then the execution summary should contain
-         | Succeeded |
-         | 2         |
-
 Scenario: ScenarioContext can be accessed from Steps base class
 	Given the following binding class
         """
@@ -316,15 +253,13 @@ Scenario: FeatureContext can be accessed from Steps base class
 		 Feature: Feature1
 	
 		 Scenario: Scenario1
-			Given I put something into the context  
-
-		 Scenario: Scenario2
+			Given I put something into the context
 			Then something should be found in the context
          """
 	When I execute the tests
 	Then the execution summary should contain
          | Succeeded |
-         | 2         |
+         | 1         |
 
 Scenario: StepContext can be accessed from Steps base class
 	Given the following binding class

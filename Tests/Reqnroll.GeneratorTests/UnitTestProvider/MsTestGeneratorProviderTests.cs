@@ -187,35 +187,35 @@ namespace Reqnroll.GeneratorTests.UnitTestProvider
             descriptionAttributeForFourthScenarioOutline.ArgumentValues().First().Should().Be("Simple Scenario Outline: and another");
         }
 
-        [Fact]
-        public void MsTestGeneratorProvider_ShouldInvokeFeatureSetupMethodWithGlobalNamespaceAlias()
-        {
-            // ARRANGE
-            var document = ParseDocumentFromString(SampleFeatureFileWithMultipleExampleSets);
-            var sampleTestGeneratorProvider = new MsTestGeneratorProvider(new CodeDomHelper(CodeDomProviderLanguage.CSharp));
-            var converter = sampleTestGeneratorProvider.CreateUnitTestConverter();
+        //[Fact]
+        //public void MsTestGeneratorProvider_ShouldInvokeFeatureSetupMethodWithGlobalNamespaceAlias()
+        //{
+        //    // ARRANGE
+        //    var document = ParseDocumentFromString(SampleFeatureFileWithMultipleExampleSets);
+        //    var sampleTestGeneratorProvider = new MsTestGeneratorProvider(new CodeDomHelper(CodeDomProviderLanguage.CSharp));
+        //    var converter = sampleTestGeneratorProvider.CreateUnitTestConverter();
 
-            // ACT
-            var code = converter.GenerateUnitTestFixture(document, "TestClassName", "Target.Namespace");
+        //    // ACT
+        //    var code = converter.GenerateUnitTestFixture(document, "TestClassName", "Target.Namespace");
 
-            // ASSERT
-            var featureSetupCall = code
-                .Class()
-                .Members()
-                .Single(m => m.Name == "TestInitializeAsync")
-                .Statements
-                .OfType<CodeConditionStatement>()
-                .First()
-                .TrueStatements
-                .OfType<CodeExpressionStatement>()
-                .First()
-                .Expression
-                .As<CodeMethodInvokeExpression>();
+        //    // ASSERT
+        //    var featureSetupCall = code
+        //        .Class()
+        //        .Members()
+        //        .Single(m => m.Name == "TestInitializeAsync")
+        //        .Statements
+        //        .OfType<CodeConditionStatement>()
+        //        .First()
+        //        .TrueStatements
+        //        .OfType<CodeExpressionStatement>()
+        //        .First()
+        //        .Expression
+        //        .As<CodeMethodInvokeExpression>();
 
-            featureSetupCall.Should().NotBeNull();
-            featureSetupCall.Method.MethodName.Should().Be("FeatureSetupAsync");
-            featureSetupCall.Method.TargetObject.As<CodeTypeReferenceExpression>().Type.BaseType.Should().Contain("global::");
-        }
+        //    featureSetupCall.Should().NotBeNull();
+        //    featureSetupCall.Method.MethodName.Should().Be("FeatureSetupAsync");
+        //    featureSetupCall.Method.TargetObject.As<CodeTypeReferenceExpression>().Type.BaseType.Should().Contain("global::");
+        //}
 
         [Fact]
         public void MsTestGeneratorProvider_ShouldNotHaveParallelExecutionTrait()

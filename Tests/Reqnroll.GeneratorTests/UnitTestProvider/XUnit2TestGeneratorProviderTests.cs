@@ -374,10 +374,10 @@ namespace Reqnroll.GeneratorTests.UnitTestProvider
 
             // ASSERT
             code.Should().NotBeNull();
-            var scenarioStartMethod = code.Class().Members().Single(m => m.Name == @"ScenarioInitialize");
-            scenarioStartMethod.Statements.Count.Should().Be(2);
+            var scenarioStartMethod = code.Class().Members().Single(m => m.Name == @"ScenarioInitializeAsync");
+            scenarioStartMethod.Statements.Count.Should().Be(5);
 
-            var expression = scenarioStartMethod.Statements[1].Should().BeOfType<CodeExpressionStatement>()
+            var expression = scenarioStartMethod.Statements[4].Should().BeOfType<CodeExpressionStatement>()
                                                 .Which.Expression.Should().BeOfType<CodeMethodInvokeExpression>().Which;
             expression.Parameters[0].Should().BeOfType<CodeVariableReferenceExpression>()
                       .Which.VariableName.Should().Be("_testOutputHelper");

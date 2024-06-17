@@ -103,7 +103,6 @@ namespace Reqnroll.Generator.UnitTestProvider
         public virtual void SetTestClassInitializeMethod(TestClassGenerationContext generationContext)
         {
             generationContext.TestClassInitializeMethod.Attributes |= MemberAttributes.Static;
-            generationContext.TestRunnerField.Attributes |= MemberAttributes.Static;
 
             generationContext.TestClassInitializeMethod.Parameters.Add(new CodeParameterDeclarationExpression(
                 TESTCONTEXT_TYPE, "testContext"));
@@ -123,48 +122,6 @@ namespace Reqnroll.Generator.UnitTestProvider
         public virtual void SetTestInitializeMethod(TestClassGenerationContext generationContext)
         {
             CodeDomHelper.AddAttribute(generationContext.TestInitializeMethod, TESTSETUP_ATTR);
-            FixTestRunOrderingIssue(generationContext);
-        }
-
-        protected virtual void FixTestRunOrderingIssue(TestClassGenerationContext generationContext)
-        {
-            //see https://github.com/reqnroll/Reqnroll/issues/96
-
-            //if (testRunner.FeatureContext != null && testRunner.FeatureContext.FeatureInfo.Title != "<current_feature_title>")
-            //  <TestClass>.<TestClassInitialize>(null);
-
-            var featureContextExpression = new CodePropertyReferenceExpression(
-                new CodeFieldReferenceExpression(null, generationContext.TestRunnerField.Name), 
-                "FeatureContext");
-
-            var callTestClassInitializeMethodExpression = new CodeMethodInvokeExpression(
-                new CodeTypeReferenceExpression(
-                    new CodeTypeReference(
-                        generationContext.Namespace.Name + "." + generationContext.TestClass.Name,
-                        CodeTypeReferenceOptions.GlobalReference)),
-                generationContext.TestClassInitializeMethod.Name,
-                new CodePrimitiveExpression(null));
-
-            CodeDomHelper.MarkCodeMethodInvokeExpressionAsAwait(callTestClassInitializeMethodExpression);
-            
-            generationContext.TestInitializeMethod.Statements.Add(
-                new CodeConditionStatement(
-                    new CodeBinaryOperatorExpression(
-                        new CodeBinaryOperatorExpression(
-                            featureContextExpression,
-                            CodeBinaryOperatorType.IdentityInequality,
-                            new CodePrimitiveExpression(null)),
-                        CodeBinaryOperatorType.BooleanAnd,
-                        new CodeBinaryOperatorExpression(
-                            new CodePropertyReferenceExpression(
-                                new CodePropertyReferenceExpression(
-                                    featureContextExpression,
-                                    "FeatureInfo"),
-                                "Title"),
-                            CodeBinaryOperatorType.IdentityInequality,
-                            new CodePrimitiveExpression(generationContext.Feature.Name))),
-                    new CodeExpressionStatement(
-                        callTestClassInitializeMethodExpression)));
         }
 
         public void SetTestCleanupMethod(TestClassGenerationContext generationContext)
